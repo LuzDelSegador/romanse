@@ -252,11 +252,40 @@
       letter-spacing: .1em;
     }
 
+    /* ── RESPONSIVE ── */
     @media(max-width:800px) {
-      .gallery-grid { grid-template-columns: repeat(3,1fr); }
+      .gallery-grid { grid-template-columns: repeat(3,1fr); gap: 10px; }
     }
-    @media(max-width:480px) {
-      .gallery-grid { grid-template-columns: repeat(2,1fr); }
+
+    @media(max-width:540px) {
+      /* intro */
+      .intro-heart    { font-size: 80px; }
+      .intro-tagline  { font-size: 1rem; margin-top: 20px; }
+      .intro-hint     { font-size: .78rem; margin-top: 14px; }
+
+      /* page */
+      #page { padding: 30px 12px 60px; }
+
+      /* gallery */
+      .gallery-title  { font-size: 1.3rem; }
+      .gallery-sub    { font-size: .82rem; margin-bottom: 20px; }
+      .gallery-grid   { grid-template-columns: repeat(2,1fr); gap: 8px; }
+      .gallery-item   { border-radius: 8px; }
+
+      /* lightbox */
+      #lb-img   { max-width: 96vw; max-height: 78vh; border-radius: 10px; }
+      #lb-close { top: 12px; right: 14px; font-size: 1.6rem; }
+      #lb-prev  { left: 6px;  width: 38px; height: 38px; font-size: 1.3rem; }
+      #lb-next  { right: 6px; width: 38px; height: 38px; font-size: 1.3rem; }
+      #lb-counter { font-size: .78rem; }
+
+      /* footer */
+      .footer { padding: 40px 16px 30px; font-size: 1rem; }
+    }
+
+    @media(max-width:360px) {
+      .gallery-grid { gap: 6px; }
+      #page { padding: 24px 8px 50px; }
     }
 
     /* ── FOOTER ── */
@@ -451,7 +480,7 @@ function showLb(dir) {
 }
 
 galleryItems.forEach((item, i) => {
-  item.addEventListener('click', () => { openLightbox(i); burst(event.clientX, event.clientY); });
+  item.addEventListener('click', (e) => { openLightbox(i); burst(e.clientX, e.clientY); });
 });
 
 lbClose.addEventListener('click', closeLightbox);
@@ -465,6 +494,14 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') showLb(1);
   if (e.key === 'Escape')     closeLightbox();
 });
+
+// Swipe táctil para lightbox
+let swipeX = 0;
+lightbox.addEventListener('touchstart', e => { swipeX = e.touches[0].clientX; }, { passive: true });
+lightbox.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - swipeX;
+  if (Math.abs(dx) > 45) showLb(dx < 0 ? 1 : -1);
+}, { passive: true });
 
 // Gallery scroll animation
 function animateGallery() {
